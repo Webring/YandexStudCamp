@@ -1,0 +1,8 @@
+**/venv
+**/env
+**/.venv
+**/.idea
+**/__pycache__
+**/.vscode
+
+control/panel/last_data.json
