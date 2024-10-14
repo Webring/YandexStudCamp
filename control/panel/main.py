@@ -1,19 +1,31 @@
 import json
 import sys
 import socket
-from email.policy import default
 
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton,
-    QLineEdit, QSlider, QFrame, QGridLayout
+    QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton,
+    QLineEdit, QSlider, QGridLayout
 )
 from PyQt5.QtCore import Qt, pyqtSlot, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 import traceback
 
+from movement import Movement
+
+
+def socket_send(current_socket: socket.socket, data: bytearray):
+    if current_socket:
+        try:
+            current_socket.sendall(data)
+            return f"send data: {data}"
+        except socket.error as e:
+            return f"Failed to send data: {e}"
+    return "Socket not connected"
+
 class SliderData:
-    def __init__(self, array: bytearray, index:int, min_value:int, max_value:int, title:str, start_value:int=None):
+    def __init__(self, array: bytearray, index: int, min_value: int, max_value: int, title: str,
+                 start_value: int = None):
         self.array = bytearray(array)
         self.index = index
         self.title = title
@@ -21,22 +33,29 @@ class SliderData:
         self.min = min_value
         self.start_value = start_value if start_value is not None else min_value
 
-class ClientWidget(QWidget):
+
+class ClientWidget(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("XiaR robot control")
-        self.layout = QVBoxLayout()
+
+        # Центральный виджет
+        self.central_widget = QWidget(self)
+        self.setCentralWidget(self.central_widget)
+
+        # Основной макет
+        self.layout = QVBoxLayout(self.central_widget)
 
         # Поля для ввода IP и порта
-        self.ip_label = QLabel("IP Address:")
+        self.ip_label = QLabel("IP Адрес:")
         self.ip_input = QLineEdit()
-        self.port_label = QLabel("Port:")
+        self.port_label = QLabel("Порт:")
         self.port_input = QLineEdit()
 
         # Кнопка подключения и индикатор подключения
-        self.connect_button = QPushButton("Connect")
+        self.connect_button = QPushButton("Подключиться")
         self.connect_button.clicked.connect(self.connect_to_server)
-        self.connection_status = QLabel("Not connected")
+        self.connection_status = QLabel("Не подключено")
 
         # Поле iframe для отображения веб-страницы по IP:8081
         self.web_view = QWebEngineView()
@@ -53,49 +72,39 @@ class ClientWidget(QWidget):
                 self.ip_input.setText(data["ip"])
                 self.port_input.setText(str(data["port"]))
         except FileNotFoundError:
-            print("Config not found")
+            self.statusBar().showMessage("Предыдушие данные не найдены!")
 
         self.sock = None
         self.pressed_keys = set()
 
     def keyPressEvent(self, event: QKeyEvent):
         scan_code = event.nativeScanCode()
-        print(scan_code)
-        data = bytearray([0xff, 0x00, 0x00, 0x00, 0xff])
         self.pressed_keys.add(scan_code)
-        
-        if self.sock:
-            if scan_code == 17:
-                data[2] = 0x01
-            elif scan_code == 30:
-                data[2] = 0x04
-            elif scan_code == 32:
-                data[2] = 0x03
-            elif scan_code == 31:
-                data[2] = 0x02
 
-            if scan_code in [17, 30, 31, 32]:
-                try:
-                    self.sock.sendall(data)
-                    print(f"Sent data: {data}")
-                except socket.error as e:
-                    print(f"Failed to send data: {e}")
+        if self.sock:
+            movement = Movement(self.sock)
+            if scan_code == 17:
+                movement.forward()
+            elif scan_code == 30:
+                movement.rotate_right()
+            elif scan_code == 32:
+                movement.rotate_left()
+            elif scan_code == 31:
+                movement.backward()
 
     def keyReleaseEvent(self, event=None):
         scan_code = event.nativeScanCode()
         try:
-            self.pressed_keys.remove(scan_code)
+            self.pressed_keys.discard(scan_code)
         except Exception as e:
             print(Exception, "not found key", scan_code)
-        if len(set([17, 30, 31, 32]) & self.pressed_keys) == 0:
+        if len(set([17, 30, 31, 32]) & self.pressed_keys) == 0 and self.sock:
             try:
                 data = bytearray([0xff, 0x00, 0x00, 0x00, 0xff])
-
                 self.sock.sendall(data)
                 print(f"Sent data: {data}")
             except socket.error as e:
                 print(f"Failed to send data: {e}")
-
 
     def init_ui(self):
         # Настройка макета для полей ввода IP и порта
@@ -130,7 +139,7 @@ class ClientWidget(QWidget):
             slider.setMinimum(sd.min)
             slider.setMaximum(sd.max)
             slider.setValue(sd.start_value)
-            slider.valueChanged.connect(self.create_handle(sd.array, sd.index))
+            slider.valueChanged.connect(self.create_handle(sd))
 
             self.slider_layout.addWidget(QLabel(sd.title), i, 0)
             self.slider_layout.addWidget(slider, i, 1)
@@ -138,15 +147,15 @@ class ClientWidget(QWidget):
         self.layout.addLayout(self.slider_layout)
         self.layout.setStretch(2, 0)
 
-        self.setLayout(self.layout)
-
-    def create_handle(self, byte_set, index):
+    def create_handle(self, sd):
+        byte_set = sd.array
+        index = sd.index
         def handle_change(value):
             if self.sock:
                 # Изменяем набор байтов в соответствии с индексом и значением слайдера
                 data = bytearray(byte_set)
                 data[index] = value
-                print(value)
+                self.statusBar().showMessage(f"{sd.title} установлено значение {value}")
                 try:
                     self.sock.sendall(data)
                     print(f"Sent data: {data}")
@@ -163,12 +172,11 @@ class ClientWidget(QWidget):
         except ValueError:
             self.connection_status.setText("Bad port")
 
-
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.connect((ip, port))
-            self.connection_status.setText("Connected")
-            print("Connected to server")
+            self.connection_status.setText("Подключено")
+            self.statusBar().showMessage("Подключено к серверу")
 
             # Обновляем iframe на веб-страницу по IP и порту 8081
             self.web_view.setUrl(QUrl(f"http://{ip}:8081"))
@@ -181,12 +189,14 @@ class ClientWidget(QWidget):
                 json.dump(last_ip, file)
 
         except socket.error as e:
-            self.connection_status.setText("Connection failed")
+            self.connection_status.setText("Ошибка подключения")
             print(f"Failed to connect: {e}")
+
 
 def excepthook(type, value, tb):
     traceback.print_exception(type, value, tb)
     sys.exit(1)
+
 
 sys.excepthook = excepthook
 
@@ -195,4 +205,3 @@ if __name__ == '__main__':
     client_widget = ClientWidget()
     client_widget.show()
     sys.exit(app.exec_())
-    traceback.print_exc()
