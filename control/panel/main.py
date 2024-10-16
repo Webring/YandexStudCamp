@@ -11,7 +11,7 @@ from PyQt5.QtCore import Qt, pyqtSlot, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 import traceback
 
-from movement import Movement
+from control.libs.movement import Movement
 
 
 def socket_send(current_socket: socket.socket, data: bytearray):

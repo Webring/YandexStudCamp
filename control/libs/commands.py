@@ -59,3 +59,6 @@ class RobotDevices:
         set_servo_4 = make_command(DEVICE_ID, SERVO_4, MIN_ANGLE, MAX_ANGLE)
         set_servo_5 = make_command(DEVICE_ID, SERVO_5, MIN_ANGLE, MAX_ANGLE)
         set_servo_6 = make_command(DEVICE_ID, SERVO_6, MIN_ANGLE, MAX_ANGLE)
+
+        catch_mode = make_command(0x03, 0x01)
+        cruising_mode = make_command(0x03, 0x00)

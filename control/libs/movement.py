@@ -1,10 +1,10 @@
 from BaseRobotHardware import BaseRobotHardware
-from control.libs.commands import RobotDevices
+from commands import RobotDevices
 
 
 class Movement(BaseRobotHardware):
     MOTOR_MAX = 100
-    MOTOR_MIN = 40
+    MOTOR_MIN = 15
 
     def forward(self):
         self._send(RobotDevices.Wheels.Movement.forward())
