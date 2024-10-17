@@ -72,3 +72,6 @@ class RobotDevices:
         set_green = make_command(DEVICE_ID, GREEN)
 
 
+
+        catch_mode = make_command(0x03, 0x01)
+        cruising_mode = make_command(0x03, 0x00)
