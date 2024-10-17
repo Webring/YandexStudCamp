@@ -57,3 +57,4 @@ class CameraMount(BaseRobotHardware):
 
     def vertical_center(self):
         self.set_horizontal(self.CENTER_VERTICAL_ANGLE)
+
