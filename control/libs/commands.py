@@ -60,6 +60,9 @@ class RobotDevices:
         set_servo_5 = make_command(DEVICE_ID, SERVO_5, MIN_ANGLE, MAX_ANGLE)
         set_servo_6 = make_command(DEVICE_ID, SERVO_6, MIN_ANGLE, MAX_ANGLE)
 
+        catch_mode = make_command(0x03, 0x01)
+        cruising_mode = make_command(0x03, 0x00)
+
     class Led:
         DEVICE_ID = 0x06
 

@@ -38,7 +38,7 @@ class Servo(BaseRobotHardware):
 
 class CameraMount(BaseRobotHardware):
     MIN_HORIZONTAL_ANGLE = 0
-    HORIZONTAL_CENTER_ANGLE = 90
+    HORIZONTAL_CENTER_ANGLE = 95
     MAX_HORIZONTAL_ANGLE = 180
 
     MIN_VERTICAL_ANGLE = 65
@@ -53,8 +53,8 @@ class CameraMount(BaseRobotHardware):
         self._send(RobotDevices.Servo.set_servo_6(value))
 
     def horizontal_center(self):
-        self.set_horizontal(self.CENTER_HORIZONTAL_ANGLE)
+        self.set_horizontal(self.HORIZONTAL_CENTER_ANGLE)
 
     def vertical_center(self):
-        self.set_horizontal(self.CENTER_VERTICAL_ANGLE)
+        self.set_horizontal(self.VERTICAL_CENTER_ANGLE)
 
