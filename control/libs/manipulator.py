@@ -8,20 +8,20 @@ servo_dict = {
     4: RobotDevices.Servo.set_servo_4,
     5: RobotDevices.Servo.set_servo_5,
     6: RobotDevices.Servo.set_servo_6
-              }
+}
 
 class Claw(BaseRobotHardware):
-    CLENCH_ANGLE = 40
-    UNCLECH_ANGLE = 100
+    CLENCH_ANGLE = 100
+    UNCLECH_ANGLE = 40
 
-    def сlench(self):
+    def clench(self):
         self._send(RobotDevices.Servo.set_servo_4(self.CLENCH_ANGLE))
 
     def unclench(self):
         self._send(RobotDevices.Servo.set_servo_4(self.UNCLECH_ANGLE))
 
     def set(self, value: int):
-        self._send(RobotDevices.Servo.set_servo_4(max(self.CLENCH_ANGLE, min(self.UNCLECH_ANGLE, value))))
+        self._send(RobotDevices.Servo.set_servo_4(max(self.UNCLENCH_ANGLE, min(self.CLECH_ANGLE, value))))
 
 class Servo(BaseRobotHardware):
     def __init__(self, socket):

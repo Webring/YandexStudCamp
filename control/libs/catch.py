@@ -1,8 +1,8 @@
 from socket import *
 import time
-from video_detection import send_coordinates
 from movement import Movement
-from manipulator import Claw
+from video_detection import send_coordinates
+from manipulator import Claw, Servo
 from math import atan
 host = "192.168.2.157"
 port = 2001
@@ -61,4 +61,4 @@ def catchCube():
     time.sleep(0.1)
     clw.сlench()
 
-catch()
+clw.unclench()
