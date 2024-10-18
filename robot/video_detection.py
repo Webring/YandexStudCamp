@@ -31,7 +31,7 @@ while True:
         break
 
     # Обрабатываем каждый второй кадр
-    if frame_counter % 2 == 0:
+    if frame_counter % 1 == 0:
         # Обработка кадра с помощью модели YOLO
         results = model(frame, verbose=False)[0]
 
@@ -51,17 +51,6 @@ while True:
                 cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                 cv2.putText(frame, class_name, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
         print(x_mean_dict)
-        if len(x_mean_dict[5]) * len(x_mean_dict[0]) != 0:
-            start_point = x_mean_dict[5][-1]
-            end_point = x_mean_dict[0][-1]
-            x_e, _ = x_mean_dict[5][-1]
-            _, y_e = x_mean_dict[0][-1]
-            end_point_2 = (x_e, y_e)
-            cv2.line(frame, start_point, end_point, color=(255, 255, 255), thickness=2)
-            cv2.line(frame, start_point, end_point_2, color=(255, 255, 255), thickness=2)
-            x_s, y_s = x_mean_dict[5][-1]
-            x_e, y_e = x_mean_dict[0][-1]
-            print(np.arctan((x_s - x_e) / (0.00001 + y_s - y_e)))
 
     # Вывод обработанного кадра в окно (даже если он не был обработан моделью)
     cv2.imshow('YOLOv8 Live', cv2.resize(frame, (720, 720)))

@@ -1,8 +1,8 @@
 from socket import *
 import time
-from video_parser import send_coordinates
-from movement import Movement
-from manipulator import Claw, Servo
+from robot.video_parser import send_coordinates
+from control.libs.movement import Movement
+from control.libs.manipulator import Claw, Servo
 from math import atan
 
 host = "192.168.2.157"
@@ -89,13 +89,14 @@ def lift():
     move.stop()
     clw.clench()
     print('Объект захвачен')
-    man.cruising_mode()
+    man.basket_mode()
 
 
 target = 0
 
-start()
-move_to_target(target, alpha_0)
-lift()
+# start()
+# move_to_target(target, alpha_0)
+# lift()
+man.catch_mode()
 
 time.sleep(1)

@@ -1,4 +1,4 @@
-from video_parser import send_coordinates
+from robot.video_parser import send_coordinates
 from socket import *
 from control.libs.movement import Movement
 from control.libs.manipulator import Claw, Servo
@@ -23,6 +23,3 @@ def calculate_angle(claw, target):
     x_s, y_s = target
     x_e, y_e = claw
     return atan((max(x_s, x_e) - min(x_s, x_e)) / (max(y_s, y_e) - min(y_s, y_e)))
-
-while False:
-    print(sensors.get_infrared_data())

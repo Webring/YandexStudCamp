@@ -1,12 +1,10 @@
 def command_bytes(device, control, data):
-    return bytearray([0xff, device, control, data, 0xff])
+    return bytearray([0xff, device, control, int(data, 16), 0xff])
 
 
 def make_command(device, control=0, min=0, max=255):
     def command(data=0x00):
-        if not (min <= data <= max):
-            raise ValueError(f"data must be {min} <= data <= {max}")
-        return command_bytes(device, control, data)
+        return command_bytes(device, control, hex(data))
 
     return command
 
@@ -19,8 +17,8 @@ class RobotDevices:
             STOP_BYTE = 0x00
             FORWARD_BYTE = 0x01
             BACKWARD_BYTE = 0x02
-            ROTATE_LEFT_BYTE = 0x03
-            ROTATE_RIGHT_BYTE = 0x04
+            ROTATE_LEFT_BYTE = 0x04
+            ROTATE_RIGHT_BYTE = 0x03
 
             forward = make_command(DEVICE_ID, FORWARD_BYTE)
             backward = make_command(DEVICE_ID, BACKWARD_BYTE)
