@@ -4,6 +4,7 @@ from video_parser import send_coordinates
 from movement import Movement
 from manipulator import Claw, Servo
 from math import atan
+
 host = "192.168.2.157"
 port = 2001
 
@@ -58,7 +59,6 @@ def catch(object, target_angle):
         print('Робот не видит')
         return
     angle = calculate_angle(claw, target)
-    print(angle)
     while (-delta + target_angle >= angle) or (angle >= delta + target_angle):
         state = send_coordinates()
         if (object in state.keys()) and (5 in state.keys()):
@@ -68,7 +68,6 @@ def catch(object, target_angle):
             print('Робот не видит')
             return
         angle = calculate_angle(claw, target)
-        print(angle)
         if angle > delta + target_angle:
             move.rotate_left()
         else:

@@ -31,7 +31,7 @@ while True:
         break
 
     # Обрабатываем каждый второй кадр
-    if frame_counter % 3 == 0:
+    if frame_counter % 2 == 0:
         # Обработка кадра с помощью модели YOLO
         results = model(frame, verbose=False)[0]
 

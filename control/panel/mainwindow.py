@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
     QHBoxLayout
 
 from control.panel.MainWindowWithKeyboard import MainWindowWithKeys
-from movement import Movement
+from control.libs.movement import Movement
 
 
 class SliderData:

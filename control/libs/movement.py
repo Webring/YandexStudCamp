@@ -1,5 +1,5 @@
-from BaseRobotHardware import BaseRobotHardware
-from commands import RobotDevices
+from control.libs.BaseRobotHardware import BaseRobotHardware
+from control.libs.commands import RobotDevices
 
 
 class Movement(BaseRobotHardware):

@@ -2,7 +2,7 @@ def command_bytes(device, control, data):
     return bytearray([0xff, device, control, data, 0xff])
 
 
-def make_command(device, control, min=0, max=255):
+def make_command(device, control=0, min=0, max=255):
     def command(data=0x00):
         if not (min <= data <= max):
             raise ValueError(f"data must be {min} <= data <= {max}")
@@ -79,3 +79,10 @@ class RobotDevices:
 
         catch_mode = make_command(0x03, 0x01)
         cruising_mode = make_command(0x03, 0x00)
+
+    class Sensors:
+        INFRARED_ID = 0x34
+        ULTRASONIC_ID = 0x33
+
+        get_infrared = make_command(INFRARED_ID)
+        get_ultrasonic = make_command(ULTRASONIC_ID)
