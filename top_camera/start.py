@@ -7,7 +7,7 @@ video_path = 'top_camera_video.mp4'
 # Папка для сохранения изображений
 output_folder = 'output_images'
 # Интервал между кадрами (каждый n-й кадр будет сохранен)
-frame_interval = 5  # Можно изменить на 2, 5 и т.д.
+frame_interval = 10  # Можно изменить на 2, 5 и т.д.
 
 os.makedirs(output_folder, exist_ok=True)
 
