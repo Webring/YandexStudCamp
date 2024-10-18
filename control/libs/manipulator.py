@@ -35,6 +35,9 @@ class Servo(BaseRobotHardware):
     
     def cruising_mode(self):
         self._send(RobotDevices.Servo.cruising_mode())
+    
+    def basket_mode(self):
+        self._send(RobotDevices.Servo.basket_mode())
 
 class CameraMount(BaseRobotHardware):
     MIN_HORIZONTAL_ANGLE = 0

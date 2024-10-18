@@ -62,6 +62,7 @@ class RobotDevices:
 
         catch_mode = make_command(0x03, 0x01)
         cruising_mode = make_command(0x03, 0x00)
+        basket_mode = make_command(0x03, 0x02)
 
     class Led:
         DEVICE_ID = 0x06

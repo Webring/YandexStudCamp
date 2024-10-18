@@ -101,6 +101,7 @@ def update_data_yaml():
 for filename in os.listdir(full_images_path):
     if filename.endswith(('.jpg', '.jpeg', '.png')):
         image_path = os.path.join(full_images_path, filename)
+        print(image_path)
         image = cv2.imread(image_path)
         image = resize_image(image)
         original_image = image.copy()
