@@ -26,13 +26,13 @@ os.makedirs(ready_images_path, exist_ok=True)
 '''
 0 - стенка - красный
 1 - движ стенка - оранжевый
-2 - линия - розовый
+2 - клешня - розовый
 3 - робот зеленый - зеленый
 4 - робот красный - синий
 5 - кнопка - голубой
-6 - зеленая база - желтозеленый
-7 - красная база - кримсон
-8 - кубик - желтый
+6 - зеленая база - зеленый
+7 - красная база - синий
+8 - кубик - голубой
 '''
 
 
@@ -91,7 +91,7 @@ def update_data_yaml():
         'val': 'dataset/valid/images',
         'test': 'dataset/test/images',
         'nc': 9,
-        'names': ['Wall', 'Moveable Wall', 'Line', 'Green Robot', 'Red Robot', 'Button', 'Green Base', 'Red Base', 'Cube']
+        'names': ['Wall', 'Moveable Wall', 'Claw', 'Green Robot', 'Red Robot', 'Button', 'Green Base', 'Red Base', 'Cube']
     }
     with open(data_yaml_path, 'w') as f:
         yaml.dump(data, f, default_flow_style=None, sort_keys=False)
@@ -101,7 +101,6 @@ def update_data_yaml():
 for filename in os.listdir(full_images_path):
     if filename.endswith(('.jpg', '.jpeg', '.png')):
         image_path = os.path.join(full_images_path, filename)
-        print(image_path)
         image = cv2.imread(image_path)
         image = resize_image(image)
         original_image = image.copy()
