@@ -3,7 +3,13 @@ import time
 from video_parser import send_coordinates
 from movement import Movement
 from manipulator import Claw, Servo
+from video_parser import send_coordinates
+from movement import Movement
+from manipulator import Claw, Servo
 from math import atan
+from sensors import Sensors
+import numpy as np
+host = "192.168.21.171"
 from sensors import Sensors
 import numpy as np
 host = "192.168.21.171"
@@ -15,13 +21,17 @@ move = Movement(sock)
 clw = Claw(sock)
 man = Servo(sock)
 sns = Sensors(sock)
+sns = Sensors(sock)
 delta = 0.07
+alpha_0 = 0.53
+upper_alpha = -0.91
 alpha_0 = 0.53
 upper_alpha = -0.91
 flag = False
 
 
 def start():
+    move.set_power(25)
     move.set_power(25)
     clw.clench()
     man.cruising_mode()
@@ -37,8 +47,11 @@ def move_to_target(object, target_angle):
         state = send_coordinates()
         datchik = sns.get_infrared_data()
         if cnt_frames % 2 == 0:
+        datchik = sns.get_infrared_data()
+        if cnt_frames % 2 == 0:
             print("#########\nI need to catch\n########")
             catch(object, target_angle)
+        if object in state.keys():
         if object in state.keys():
             cnt = 0
             move.forward(20)
@@ -55,6 +68,7 @@ def move_to_target(object, target_angle):
 
 def catch(object, target_angle):
     move.set_power(25)
+    move.set_power(25)
     man.catch_mode()
     clw.unclench()
     state = send_coordinates()
@@ -65,6 +79,7 @@ def catch(object, target_angle):
         return
     angle = calculate_angle(claw, target)
     print(angle)
+    print(angle)
     while (-delta + target_angle >= angle) or (angle >= delta + target_angle):
         state = send_coordinates()
         if (object in state.keys()) and (5 in state.keys()):
@@ -73,6 +88,7 @@ def catch(object, target_angle):
         else:
             return
         angle = calculate_angle(claw, target)
+        print(angle)
         print(angle)
         if angle > delta + target_angle:
             move.rotate_right(3)
@@ -85,6 +101,7 @@ def catch(object, target_angle):
 def calculate_angle(claw, target):
     x_s, y_s = target
     x_e, y_e = claw
+    return np.abs((np.arctan((x_e - x_s) / (0.00001 + y_e - y_s))))
     return np.abs((np.arctan((x_e - x_s) / (0.00001 + y_e - y_s))))
 
 
