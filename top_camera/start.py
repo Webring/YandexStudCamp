@@ -3,7 +3,7 @@ import os
 import time
 
 # Путь к видеофайлу
-video_path = 'rotate_polygon.mp4'
+video_path = 'rotate_polygon2.mp4'
 # Папка для сохранения изображений
 output_folder = 'output_images'
 # Интервал между кадрами (каждый n-й кадр будет сохранен)

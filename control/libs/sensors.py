@@ -11,3 +11,6 @@ class Sensors(BaseRobotHardware):
     
     def get_ultrasonic_data(self):
         return self._send_and_recieve(RobotDevices.Sensors.get_ultrasonic())
+    
+    def get_linedetection_data(self):
+        return self._send_and_recieve(RobotDevices.Sensors.get_linedetection())

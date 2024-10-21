@@ -1,21 +1,19 @@
 import numpy as np
-from led import Led
+# from led import Led
 from camera_yolo import state
-
 from socket import *
 import time
+# from movement import Movement
 
-from movement import Movement
 
-
-host = "192.168.2.157"
-port = 2001
+# host = "192.168.2.157"
+# port = 2001
 
 delta = 0.1
-sock = socket(AF_INET, SOCK_STREAM)
-sock.connect((host, port))
-led = Led(sock)
-move = Movement(sock)
+# sock = socket(AF_INET, SOCK_STREAM)
+# sock.connect((host, port))
+# led = Led(sock)
+# move = Movement(sock)
 
 
 def distanse(point_a, point_b):
@@ -41,7 +39,6 @@ def calculate_angle(point_a, point_b, point_c):
     AC_length = math.sqrt(AC[0] ** 2 + AC[1] ** 2)
 
     cos_alpha = dot_product / (AB_length * AC_length)
-
     alpha = math.acos(cos_alpha)
 
     if (x3 - x1) * (y2 - y1) - (y3 - y1) * (x2 - x1) > 0:
@@ -49,19 +46,21 @@ def calculate_angle(point_a, point_b, point_c):
     else:
         return -alpha
 
+
+
 def robot_position():
     robot_state = state()
-    print(robot_state, 'aaaaa')
+    print(robot_state)
     if len(robot_state[4]) * len(robot_state[2]) != 0:
         for p in robot_state[2]:
             if distanse(robot_state[4][-1], p) < 200:
                 return robot_state[4][-1], p
             else:
-                print("Робота/Клешни нет")
                 return robot_position()
     else:
         print("Ничего нет")
         return robot_position()
+
 
 def in_epsilon_area(point, eps=100):
     point_robot, point_claw = robot_position()
@@ -72,33 +71,32 @@ def in_epsilon_area(point, eps=100):
 
 
 def start():
-    led.set_red()
-    move.set_power(16)
+    # led.set_red()
+    # move.set_power(16)
+    pass
 
 
 def rotate(point_b):
     point_robot, point_claw = robot_position()
     cur_angle = calculate_angle(point_robot, point_claw, point_b)
-    print(cur_angle)
     while (-delta >= cur_angle) or (cur_angle >= delta):
         print(robot_position())
         point_robot, point_claw = robot_position()
         cur_angle = calculate_angle(point_robot, point_claw, point_b)
-        print(cur_angle)
         if cur_angle > delta:
-            move.rotate_right()
+            # move.rotate_right()
             time.sleep(0.1)
         elif cur_angle < -delta:
-            move.rotate_left()
+            # move.rotate_left()
             time.sleep(0.1)
         else:
             return
 
 
 def go_forward(point_b):
-    move.set_power(40)
+    # move.set_power(40)
     while not in_epsilon_area(point_b):
-        move.forward()
+        # move.forward()
         time.sleep(3)
 
 
@@ -107,9 +105,15 @@ def main():
     start()
     for i in point_stack:
         rotate(i)
-        move.stop()
+        # move.stop()
         print("go forward")
         go_forward(i)
 
+while True:
+    st = state()
+    print(st)
+    for i in st[2]:
+        if distanse(st[3][0], i) < 200:
+            print(calculate_angle(st[3][0], i, (0,0)))
+    input()
 
-main()

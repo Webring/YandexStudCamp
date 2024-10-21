@@ -107,6 +107,7 @@ for filename in os.listdir(full_images_path):
         annotations = []
 
         cv2.namedWindow(window_name)
+        cv2.moveWindow(window_name, 630,100)
         cv2.setMouseCallback(window_name, draw_rectangle, param={'original_image': original_image})
 
         while True:

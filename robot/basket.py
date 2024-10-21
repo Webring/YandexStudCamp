@@ -1,4 +1,4 @@
-from robot.video_parser import send_coordinates
+from video_parser import send_coordinates
 from socket import *
 from control.libs.movement import Movement
 from control.libs.manipulator import Claw, Servo

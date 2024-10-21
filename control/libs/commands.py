@@ -81,6 +81,8 @@ class RobotDevices:
     class Sensors:
         INFRARED_ID = 0x34
         ULTRASONIC_ID = 0x33
+        LINEDETECTION_ID = 0x31
 
         get_infrared = make_command(INFRARED_ID)
         get_ultrasonic = make_command(ULTRASONIC_ID)
+        get_linedetection = make_command(ULTRASONIC_ID)
