@@ -1,11 +1,12 @@
 from socket import *
 import time
-from robot.video_parser import send_coordinates
-from control.libs.movement import Movement
-from control.libs.manipulator import Claw, Servo
+from video_parser import send_coordinates
+from movement import Movement
+from manipulator import Claw, Servo
 from math import atan
-
-host = "192.168.2.157"
+from sensors import Sensors
+import numpy as np
+host = "192.168.21.171"
 port = 2001
 
 sock = socket(AF_INET, SOCK_STREAM)
@@ -13,14 +14,15 @@ sock.connect((host, port))
 move = Movement(sock)
 clw = Claw(sock)
 man = Servo(sock)
+sns = Sensors(sock)
 delta = 0.07
-alpha_0 = 0.15
-upper_alpha = 0.89
+alpha_0 = 0.53
+upper_alpha = -0.91
 flag = False
 
 
 def start():
-    move.set_power(15)
+    move.set_power(25)
     clw.clench()
     man.cruising_mode()
 
@@ -33,22 +35,24 @@ def move_to_target(object, target_angle):
     while True:
         cnt_frames += 1
         state = send_coordinates()
-        if cnt_frames % 3 == 0:
+        datchik = sns.get_infrared_data()
+        if cnt_frames % 2 == 0:
             print("#########\nI need to catch\n########")
             catch(object, target_angle)
-        if target in state.keys():
+        if object in state.keys():
             cnt = 0
             move.forward()
         else:
             cnt += 1
             move.forward()
-        if cnt == 2:
+        if datchik[1] == 1:
+            print(datchik)
             move.stop()
             break
 
 
 def catch(object, target_angle):
-    move.set_power(15)
+    move.set_power(25)
     man.catch_mode()
     clw.unclench()
     state = send_coordinates()
@@ -56,28 +60,28 @@ def catch(object, target_angle):
         claw = state[object]
         target = state[5]
     else:
-        print('Робот не видит')
         return
     angle = calculate_angle(claw, target)
+    print(angle)
     while (-delta + target_angle >= angle) or (angle >= delta + target_angle):
         state = send_coordinates()
         if (object in state.keys()) and (5 in state.keys()):
             claw = state[object]
             target = state[5]
         else:
-            print('Робот не видит')
             return
         angle = calculate_angle(claw, target)
+        print(angle)
         if angle > delta + target_angle:
-            move.rotate_left()
-        else:
             move.rotate_right()
+        else:
+            move.rotate_left()
 
 
 def calculate_angle(claw, target):
     x_s, y_s = target
     x_e, y_e = claw
-    return atan((max(x_s, x_e) - min(x_s, x_e)) / (max(y_s, y_e) - min(y_s, y_e)))
+    return np.abs((np.arctan((x_e - x_s) / (0.00001 + y_e - y_s))))
 
 
 def lift():
@@ -89,14 +93,16 @@ def lift():
     move.stop()
     clw.clench()
     print('Объект захвачен')
-    man.basket_mode()
+    man.cruising_mode()
 
 
 target = 0
 
-# start()
-# move_to_target(target, alpha_0)
-# lift()
-man.catch_mode()
+start()
+move_to_target(target, alpha_0)
+lift()
 
 time.sleep(1)
+
+'''clw.unclench()'''
+man.basket_mode()
