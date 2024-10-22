@@ -1,8 +1,9 @@
 from object_detection.video_parser import send_coordinates
 from control.libs.manipulator import Claw, Servo
 from socket import *
-from catch import start, move_to_target, lift
-from move import move_to_t
+from moving.catch import start, move_to_target, lift
+from moving.move import move_to_t
+from control.libs.led import Led
 import time
 
 host = "192.168.2.157"
@@ -12,6 +13,7 @@ sock = socket(AF_INET, SOCK_STREAM)
 sock.connect((host, port))
 clw = Claw(sock)
 man = Servo(sock)
+led = Led(sock)
 caught = False
 
 def check(cords):
@@ -31,7 +33,11 @@ def check(cords):
     else:
         return "STOP"
     
-
+index = input("0 или 1 (красный или зелёный)")
+if index:
+    led.set_green()
+else:
+    led.set_red()
 
 while True:
     man.basket_mode()
