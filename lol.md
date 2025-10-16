@@ -1,4 +1,3 @@
-```markdown
 # Distilling an autoregressive coding Transformer into a masked diffusion language model (LLaDA-style)
 
 This guide explains how to use an autoregressive (AR) Transformer teacher’s logits to train a smaller masked diffusion language model (MDM) student, following the LLaDA approach. It focuses on defining a knowledge-distillation (KD) loss that replaces hard targets with teacher soft targets for masked tokens, and on reconciling the student’s bidirectional conditioning with the teacher’s left-to-right nature.
@@ -215,10 +214,6 @@ Replace the masked CE target at masked positions by a convex combination:
 \lambda\,T^2\,\mathrm{KL}\!\left(q_T(\cdot \mid \text{left},\text{right})\;\Vert\;p_\theta^T(\cdot \mid x_t)\right)
 \]
 where \(q_T\) is obtained via FIM or suffix scoring (exact for a single masked token), or approximated by left-only if necessary.
-
-```
-
-- If you want, I can also draft a small reference implementation stub around your existing training loop.
 - If your teacher has FIM, use it; otherwise, suffix scoring with top-K is the most faithful way to obtain bidirectional soft targets.
 - Prefer sharing the tokenizer between teacher and student.
 
